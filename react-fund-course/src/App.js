@@ -11,13 +11,10 @@ import MySelect from "./components/UI/select/MySelect";
 import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
 import { usePosts } from "./hooks/usePosts";
+import axios from "axios";
 
 function App() {
-  const [posts, setPosts] = useState([
-    { id: 1, title: "aaa", body: "Description" },
-    { id: 2, title: "ddd", body: "Description" },
-    { id: 3, title: "aaa", body: "Description" },
-  ]);
+  const [posts, setPosts] = useState([]);
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
   const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
@@ -27,12 +24,20 @@ function App() {
     setModal(false);
   };
 
+  async function fetchPosts() {
+    const response = await axios.get(
+      "https://jsonplaceholder.typicode.com/posts"
+    );
+    setPosts(response.data);
+  }
+
   const removePost = (post) => {
     setPosts(posts.filter((p) => p.id !== post.id));
   };
 
   return (
     <div className="App">
+      <button onClick={fetchPosts}>GET POSTS</button>
       <MyButton onClick={() => setModal(true)}>Создать пользователя</MyButton>
       <MyModal visible={modal} setVisible={setModal}>
         <PostForm create={createPost} />
