@@ -16,6 +16,7 @@ import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
 import { useFetching } from "./hooks/useFetching";
 import { getPageCount, getPagesArray } from "./utils/pages";
+import Pagination from "./components/UI/pagination/Pagination";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -26,8 +27,6 @@ function App() {
   const [page, setPage] = useState(1);
   const sortedAndSearchPosts = usePosts(posts, filter.sort, filter.query);
 
-  let pagesArray = getPagesArray(totalPages);
-
   const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
     const response = await PostService.getAll(limit, page);
     setPosts(response.data);
@@ -37,7 +36,7 @@ function App() {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [page]);
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -50,7 +49,6 @@ function App() {
 
   const changePage = (page) => {
     setPage(page);
-    fetchPosts();
   };
 
   return (
@@ -79,17 +77,7 @@ function App() {
           title="Список постов 2"
         />
       )}
-      <div className="page__wrapper">
-        {pagesArray.map((p) => (
-          <span
-            className={page === p ? "page page__current" : "page"}
-            key={p}
-            onClick={() => changePage(p)}
-          >
-            {p}
-          </span>
-        ))}
-      </div>
+      <Pagination page={page} changePage={changePage} totalPages={totalPages} />
     </div>
   );
 }
