@@ -1,23 +1,14 @@
 import React, { useState } from "react";
+import Counter from "./components/Counter";
 
 function App() {
-  const [likes, setLikes] = useState(0);
+  const [value, setValue] = useState('Текст в инпуте')
 
-  function increment() {
-    setLikes(likes + 1);
-    console.log(likes);
-  }
-
-  function decrement() {
-    setLikes(likes - 1);
-    console.log(likes);
-  }
+  
 
   return (
     <div className="App">
-      <h1>{likes}</h1>
-      <button onClick={increment}>Increment</button>
-      <button onClick={decrement}>Decrement</button>
+      <Counter />
     </div>
   );
 }
