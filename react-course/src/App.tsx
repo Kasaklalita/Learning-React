@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import Counter from "./components/Counter";
 import PostForm from "./components/PostForm";
 import PostList from "./components/PostList";
@@ -14,6 +14,23 @@ function App() {
   ]);
 
   const [selectedSort, setSelectedSort] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const sortedPosts = useMemo(() => {
+    console.log("Отработала getSortedPosts");
+    if (selectedSort) {
+      return [...posts].sort((a, b) =>
+        a[selectedSort].localeCompare(b[selectedSort])
+      );
+    }
+    return posts;
+  }, [selectedSort, posts]);
+
+  const sortedAndSearchedPosts = useMemo(() => {
+    return sortedPosts.filter((post) =>
+      post.title.toLowerCase().includes(searchQuery)
+    );
+  }, [searchQuery, sortedPosts]);
 
   const createPost = (newPost: any) => {
     setPosts([...posts, newPost]);
@@ -25,7 +42,6 @@ function App() {
 
   const sortPosts = (sort: string) => {
     setSelectedSort(sort);
-    setPosts([...posts].sort((a, b) => a[sort].localeCompare(b[sort])));
   };
 
   return (
@@ -33,7 +49,13 @@ function App() {
       <PostForm create={createPost} />
       <hr />
       <div>
-        <MyInput placeholder="Поиск">
+        <MyInput
+          placeholder="Поиск"
+          value={searchQuery}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSearchQuery(e.target.value)
+          }
+        />
         <MySelect
           value={selectedSort}
           onChange={sortPosts}
@@ -45,8 +67,12 @@ function App() {
         />
       </div>
 
-      {posts.length !== 0 ? (
-        <PostList posts={posts} title="Список постов" remove={removePost} />
+      {sortedAndSearchedPosts.length !== 0 ? (
+        <PostList
+          posts={sortedAndSearchedPosts}
+          title="Список постов"
+          remove={removePost}
+        />
       ) : (
         <h1 style={{ textAlign: "center" }}>Посты не были найдены</h1>
       )}
