@@ -1,5 +1,6 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
+import Hover from "./components/Hover";
 import useInput from "./hooks/useInput";
 
 function App() {
@@ -8,11 +9,7 @@ function App() {
 
   return (
     <div className="App">
-      <input type="text" placeholder="username" {...username} />
-      <input type="text" placeholder="password" {...password} />
-      <button onClick={() => console.log(username.value, password.value)}>
-        Click
-      </button>
+      <Hover />
     </div>
   );
 }
